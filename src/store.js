@@ -17,16 +17,16 @@ const useStore = create(function (set) {
         incrementTick: () => set((state) => ({ tick: state.tick + 1 })), // dummy update to trigger re-render
         dungeonStats: {
             "Goblin Dungeon": {
-                levelsCompleted: 0
+                timesCompleted: 0
             }
         },
-        incrementLevelCompleted: (dungeon) => set((state) => (
+        incrementTimesCompleted: (dungeon) => set((state) => (
             {
                 dungeonStats: {
                     ...state.dungeonStats,
                     [dungeon]: {
                         ...state.dungeonStats[dungeon],
-                        levelsCompleted: state.dungeonStats[dungeon].levelsCompleted + 1
+                        timesCompleted: state.dungeonStats[dungeon].timesCompleted + 1
                     }
                 }
             }

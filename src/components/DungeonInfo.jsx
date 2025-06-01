@@ -19,7 +19,10 @@ function DungeonInfo() {
 
   return (
     <>
-    <div>{dungeon.current_dungeon}, <br></br>Times Completed: {dungeonStats[dungeon.current_dungeon]["levelsCompleted"]} {Object.keys(enemy_info).map((enemy, index) =>
+    <div>{dungeon.current_dungeon}, 
+        <br></br>Level: {dungeon.get_level()}
+        <br></br>Level Completion: {((dungeonStats[dungeon.current_dungeon]["timesCompleted"]+10)-(dungeon.get_level()*10))}/10 
+        {Object.keys(enemy_info).map((enemy, index) =>
         {
             let drops = []
             for (let i = 0; i < enemy_info[enemy].length; i++) {

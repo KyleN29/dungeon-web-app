@@ -71,6 +71,13 @@ class Dungeon {
         this.add_to_output('Starting new dungeon.', 'start')
     }
 
+    get_level() {
+        const { dungeonStats } = useStore.getState()
+        const times_completed = dungeonStats[this.current_dungeon]["timesCompleted"]
+        const level = Math.floor(times_completed / 10)
+        return level+1
+    }
+
     get_dungeon_enemy_info() {
         let enemies = dungeon_enemies[this.current_dungeon]
         let enemy_info = {}
@@ -165,7 +172,7 @@ class Dungeon {
 
             available_cells.splice(random_index, 1)
 
-            this.grid[random_cell[0]][random_cell[1]] = new Cell({occupant: new Enemy('goblin', 50, 1, 100), is_accessible: true})
+            this.grid[random_cell[0]][random_cell[1]] = new Cell({occupant: new Enemy('goblin', 50*this.get_level(), 2*this.get_level(), 100), is_accessible: true})
         }
     }
 
@@ -370,11 +377,17 @@ class Dungeon {
             let result = this.fight_enemy(new_occupant) 
 
             if (result && new_occupant instanceof Boss) {
-                const { incrementLevelCompleted } = useStore.getState()
-                incrementLevelCompleted(this.current_dungeon)
+                const { incrementTimesCompleted } = useStore.getState()
+                incrementTimesCompleted(this.current_dungeon)
                 this.following_path = false
                 this.dungeon_active = false
                 this.add_to_output('Defeated the boss.', 'kill')
+                this.start_dungeon()
+                return
+            }
+            else if (!result) {
+                this.following_path = false
+                this.dungeon_active = false
                 this.start_dungeon()
                 return
             }
