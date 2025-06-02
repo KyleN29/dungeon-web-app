@@ -10,7 +10,8 @@ import reactLogo from '~/assets/react.svg'
 import viteLogo from '/vite.svg'
 import './App.css'
 import useStore from '~/store';
-
+import { useFlashTrigger } from '~/game_objects/useFlashTrigger';
+import { registerFlashTrigger } from '~/game_objects/flashController';
 function renderDungeon(dungeon) {
     let rendered_dungeon = []
     dungeon.forEach((row, rowIndex) => {
@@ -40,7 +41,8 @@ function renderDungeon(dungeon) {
     return rendered_dungeon
 
 }
-function getCellClass(cell) {
+function getCellClass(cell, isFlash) {
+    if (isFlash) return 'bg-red-500 bg-opacity-50'
     if (!cell) return 'bg-[rgb(43,43,43)] aspect-square';
   
     const base = 'border-2 border-[rgb(43,43,43)] bg-[rgb(20,20,20)] aspect-square flex items-center justify-center text-sm sm:text-base md:text-lg';
@@ -56,6 +58,7 @@ function getCellClass(cell) {
     return `${base} ${occupantClass}`;
   }
 function DungeonLayout() {
+    const flash = useFlashTrigger(registerFlashTrigger);
   const dungeon = useStore((s) => s.dungeon)
   useEffect(() => {
     dungeon.start_dungeon()
@@ -65,11 +68,11 @@ function DungeonLayout() {
 
   return (
     <>
-    <div style={{
+    <div id="flashTarget" style={{
     gridTemplateColumns: `repeat(${dungeon.grid_size}, minmax(0, 1fr))`,
   }} className={`grid w-full h-full gap-[0px]`}>
         {renderDungeon(dungeon.grid).flat().map((cell, index) => (
-            <div key={index} className={getCellClass(cell)}>{cell}</div>
+            <div key={index} className={getCellClass(cell, flash)}>{cell}</div>
         ))}
       
     </div>

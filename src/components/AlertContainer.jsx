@@ -8,7 +8,7 @@ function AlertContainer() {
 
   return (
     <>
-    <div className="fixed top-4 left-1/2 transform -translate-x-1/2 z-50 flex flex-col items-center space-y-2 pointer-events-none">
+    <div className="fixed top-4 left-0 transform -translate-x-1/2 z-50 flex flex-col items-center space-y-2 pointer-events-none">
 {
     alertManager.alerts.map((alert, index) => (
         <div className={`

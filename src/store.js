@@ -17,7 +17,7 @@ const useStore = create(function (set) {
         incrementTick: () => set((state) => ({ tick: state.tick + 1 })), // dummy update to trigger re-render
         dungeonStats: {
             "Goblin Dungeon": {
-                timesCompleted: 0
+                max_mastery: 0
             }
         },
         incrementTimesCompleted: (dungeon) => set((state) => (
@@ -35,12 +35,11 @@ const useStore = create(function (set) {
         playerHP: 3,
         score: 0,
         gameOver: false,
-        inventory: [new Weapon('Iron Sword', 'HEYYY', 10000),
-        ],
+        inventory: [],
         equippedWeapon: null,
-        equipWeapon: (itemName) => set((state) => {
+        equipWeapon: (itemID) => set((state) => {
             for (let i = 0; i < state.inventory.length; i++) {
-                if (itemName == state.inventory[i].name) {
+                if (itemID == state.inventory[i].id) {
                     return {equippedWeapon: state.inventory[i]}
                 }
             }

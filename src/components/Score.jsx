@@ -64,6 +64,7 @@ function Score() {
 
             Coins: {coins} 
             Health: {player.health}
+            Attack: {player.get_attack()}
             Moves: {dungeon.moves}
             </div>
             )}

@@ -20,8 +20,8 @@ function DungeonInfo() {
   return (
     <>
     <div>{dungeon.current_dungeon}, 
-        <br></br>Level: {dungeon.get_level()}
-        <br></br>Level Completion: {((dungeonStats[dungeon.current_dungeon]["timesCompleted"]+10)-(dungeon.get_level()*10))}/10 
+        <br />Mastery: {dungeon.current_mastery} (Max: {dungeon.max_mastery})<button className="bg-neutral-500 cursor-pointer hover:bg-neutral-600 rounded w-[60px]" onClick={() => dungeon.try_decrease_mastery()}>Down</button> <button className="bg-neutral-500 cursor-pointer hover:bg-neutral-600 rounded w-[60px]" onClick={() => dungeon.try_increase_mastery()}>Up</button>
+        <input defaultChecked onChange={(e) => dungeon.set_auto_change_level(e.target.checked)} type="checkbox" id="vehicle1" name="vehicle1" value="Bike"></input><br></br>Level: {dungeon.current_level} (Max: {dungeon.max_levels[dungeon.current_mastery]})<button className="bg-neutral-500 cursor-pointer hover:bg-neutral-600 rounded w-[60px]" onClick={() => dungeon.try_decrease_level()}>Down</button> <button className="bg-neutral-500 cursor-pointer hover:bg-neutral-600 rounded w-[60px]" onClick={() => dungeon.try_increase_level()}>Up</button>
         {Object.keys(enemy_info).map((enemy, index) =>
         {
             let drops = []
@@ -29,9 +29,8 @@ function DungeonInfo() {
                 drops.push(enemy_info[enemy][i])
             }
             
-        return <div key={index}>{enemy}-{enemy_info[enemy].map((drop, dropIndex) => {
-            const {item, rate} = drop;
-            return <div key={dropIndex}>{item.name}-{rate * 100}%</div>
+        return <div key={index}>{enemy}-{enemy_info[enemy].map((item, dropIndex) => {
+            return <div key={dropIndex}>{item.name}-{item.rates[dungeon.current_mastery-1] * 100}%</div>
         })}</div>
         })}
         </div>

@@ -13,7 +13,7 @@ class Player {
     add_item_to_inventory(item: Item) {
         const { inventory, addItem, increaseItemQuantity } = useStore.getState();
         for (let i = 0; i < inventory.length; i++) {
-            if (item.name == inventory[i].name) {
+            if (item.name == inventory[i].name && item.type == 'Material') {
                 increaseItemQuantity(item.name, item.quantity)
                 return
             }
