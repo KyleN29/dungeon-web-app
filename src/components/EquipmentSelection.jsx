@@ -3,8 +3,9 @@ import InventorySlot from "./InventorySlot";
 function EquipmentSelection({isVisible, setIsVisible, type}) {
     const inventory = useStore((s) => s.inventory)
     // Important in order for the component to update at correct times
-    const tick = useStore((s) => s.tick);
+    // const tick = useStore((s) => s.tick);
     const equippedWeapon = useStore((s) => s.equippedWeapon);
+    const equippedArmor = useStore((s) => s.equippedArmor)
     
   return (
     <> 
@@ -21,7 +22,7 @@ function EquipmentSelection({isVisible, setIsVisible, type}) {
                         if (item.type != type) {
                             return;
                         }
-                        return <div key={index}><InventorySlot item={item} equippedWeapon={equippedWeapon}></InventorySlot></div>
+                        return <div key={index}><InventorySlot item={item} equippedWeapon={equippedWeapon} equippedArmor={equippedArmor}></InventorySlot></div>
                     }
                         
                     )}

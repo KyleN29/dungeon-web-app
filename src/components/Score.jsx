@@ -63,7 +63,7 @@ function Score() {
             <div>
 
             Coins: {coins} 
-            Health: {player.health}
+            Health: {player.health} / {player.get_max_health()}
             Attack: {player.get_attack()}
             Moves: {dungeon.moves}
             </div>

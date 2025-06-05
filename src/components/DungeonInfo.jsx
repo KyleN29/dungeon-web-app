@@ -13,7 +13,7 @@ import useStore from '~/store';
 
 function DungeonInfo() {
   const dungeon = useStore((s) => s.dungeon)
-    const enemy_info = dungeon.get_dungeon_enemy_info()
+    const enemy_info = dungeon.get_dungeon_enemy_info(true)
     const { dungeonStats } = useStore.getState()
   const tick = useStore((s) => s.tick); 
 
@@ -29,7 +29,7 @@ function DungeonInfo() {
                 drops.push(enemy_info[enemy][i])
             }
             
-        return <div key={index}>{enemy}-{enemy_info[enemy].map((item, dropIndex) => {
+        return <div key={index}>{enemy} (Health: {enemy_info[enemy].health}, Attack: {enemy_info[enemy].attack}){enemy_info[enemy].drops.map((item, dropIndex) => {
             return <div key={dropIndex}>{item.name}-{item.rates[dungeon.current_mastery-1] * 100}%</div>
         })}</div>
         })}

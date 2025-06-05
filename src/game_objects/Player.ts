@@ -2,12 +2,17 @@ import Item from "./Item"
 import useStore from "../store"
 class Player {
     health: number
+    max_health: number
+    defense: number
     attack: number
     coins: number
     constructor() {
         this.health = 100
-        this.attack = 100
+        this.max_health = 100
+        this.attack = 1000000000
+        this.defense = 0
         this.coins = 0
+
     }
 
     add_item_to_inventory(item: Item) {
@@ -24,10 +29,32 @@ class Player {
     }
 
     get_attack() {
-        const { equippedWeapon } = useStore.getState()
+        const { equippedWeapon, upgradeManager } = useStore.getState()
         let attack = this.attack
         if (equippedWeapon) attack += equippedWeapon.attack;
-        return attack
+        return Math.floor(attack + (attack * upgradeManager.more_attack.level  * .1))
+    }
+
+    get_max_health() {
+        const {equippedArmor, upgradeManager} = useStore.getState()
+        let max_health = this.max_health
+        for (const armorType in equippedArmor) {
+            if (equippedArmor[armorType]) {
+                max_health += equippedArmor.health
+            }
+        }
+        return Math.floor(max_health + (max_health * upgradeManager.more_health.level  * .1))
+    }
+
+    get_defense() {
+        const {equippedArmor} = useStore.getState()
+        let defense = this.defense
+        for (const armorType in equippedArmor) {
+            if (equippedArmor[armorType]) {
+                defense += equippedArmor.defense
+            }
+        }
+        return defense
     }
 }
 

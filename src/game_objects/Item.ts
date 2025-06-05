@@ -5,8 +5,8 @@ class Item {
     quantity: number
     description: string
     rates: number[]
-    constructor(name, type, quantity, description, rates, id) {
-        this.id = id
+    constructor(name, type, quantity, description, rates) {
+        this.id = crypto.randomUUID()
         this.name = name
         this.type = type
         this.quantity = quantity

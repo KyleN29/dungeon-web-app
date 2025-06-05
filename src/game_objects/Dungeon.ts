@@ -1,7 +1,7 @@
 import Cell from './Cell'
 import Chest from './Chest'
 import Enemy, { dungeon_enemies } from './Enemy'
-import Boss from './Boss'
+import Boss, {dungeon_bosses} from './Boss'
 import Player from './Player'
 import useStore from '~/store';
 import { enemy_drops} from '../game_data/EnemyDrops'
@@ -77,7 +77,9 @@ class Dungeon {
         }
         let starting_pos = this.generate_grid(Math.floor((this.grid_size * this.grid_size) * .33))
         this.player_pos = starting_pos
-        this.grid[starting_pos[0]][starting_pos[1]] = new Cell({occupant: new Player(), is_accessible: true})
+        let player = new Player()
+        player.health = player.get_max_health()
+        this.grid[starting_pos[0]][starting_pos[1]] = new Cell({occupant: player, is_accessible: true})
         this.populate_boss()
         this.populate_enemies(Math.floor((this.grid_size * this.grid_size) * .1))
         this.populate_chests()
@@ -99,15 +101,25 @@ class Dungeon {
     //     return level+1
     // }
 
-    get_dungeon_enemy_info() {
+    get_dungeon_enemy_info(includeBosses: boolean = false) {
         let enemies = dungeon_enemies[this.current_dungeon]
+        let bosses = dungeon_bosses[this.current_dungeon]
         let enemy_info = {}
         for (const name of Object.keys(enemies)) {
-            enemy_info[name] = enemy_drops[name]
+            enemy_info[name] = {drops: enemy_drops[name], health: enemies[name].compute_health(this.current_mastery, this.current_level), attack: enemies[name].compute_attack(this.current_mastery, this.current_level),  isBoss: false}
         }
+        if (includeBosses) {
+            for (const name of Object.keys(bosses)) {
+                enemy_info[name] = {drops: enemy_drops[name], health: bosses[name].compute_health(this.current_mastery, this.current_level), attack: bosses[name].compute_attack(this.current_mastery, this.current_level), isBoss: false}
+            }
+        }
+        
 
         return enemy_info
     }
+
+
+
 
     get_player() {
         if (this.player_pos) return this.grid[this.player_pos[0]][this.player_pos[1]].occupant
@@ -139,6 +151,8 @@ class Dungeon {
 
         return direction
     }
+
+    
 
     shortestPath(grid, start, target) {
         const rows = grid.length;
@@ -197,8 +211,11 @@ class Dungeon {
             random_index = Math.floor(Math.random() * enemy_names.length)
 
             let random_enemy = dungeon_enemies[this.current_dungeon][enemy_names[random_index]]
+            let enemy = new Enemy(random_enemy.name, Math.floor(random_enemy.health*this.current_mastery*(1+this.current_level/100)), Math.floor(random_enemy.attack*this.current_mastery*(1+this.current_level/100)), random_enemy.coin_value)
+            enemy.attack = enemy.compute_attack(this.current_mastery, this.current_level)
+            enemy.health = enemy.compute_health(this.current_mastery, this.current_level)
 
-            this.grid[random_cell[0]][random_cell[1]] = new Cell({occupant: new Enemy(random_enemy.name, random_enemy.health*this.current_mastery, random_enemy.attack*this.current_mastery, random_enemy.coin_value), is_accessible: true})
+            this.grid[random_cell[0]][random_cell[1]] = new Cell({occupant: enemy, is_accessible: true})
             // console.log("hey")
 
         }
@@ -230,7 +247,8 @@ class Dungeon {
         
         if (!longest_path.length) return
         let furthest_cell = longest_path[longest_path.length - 1]
-        this.grid[furthest_cell[0]][furthest_cell[1]] = new Cell({occupant: new Boss('goblin', 100*this.current_mastery, 10*this.current_mastery, 1000), is_accessible: true})
+        let boss = dungeon_bosses[this.current_dungeon]["Goblin Lord"]
+        this.grid[furthest_cell[0]][furthest_cell[1]] = new Cell({occupant: new Boss(boss.name, boss.health, boss.attack, boss.coin_value), is_accessible: true})
     }
 
     generate_grid(cells: number) {
@@ -340,7 +358,6 @@ class Dungeon {
             if (this.moves > 0) {
                 this.make_player_move(this.player_pos, [row, col])
                 incrementTick(); // <-- This makes React re-render
-                console.log("SUBTRACTING MOVES AT: "+Date.now()+" HERES MY ID: "+dungeon_id)
                 this.moves--;
                 
             }
@@ -436,6 +453,36 @@ class Dungeon {
         this.start_dungeon()
     }
 
+    // Returns true if move was valid
+    compute_manual_move(direction: string) {
+        if (direction == "up") {
+            if (this.player_pos[0]-1 >= 0 && this.grid[this.player_pos[0]-1][this.player_pos[1]].is_accessible) {
+                this.make_player_move(this.player_pos, [this.player_pos[0]-1, this.player_pos[1]])
+                return true
+            }
+        }
+        else if (direction == "down") {
+            if (this.player_pos[0]+1 < this.grid_size && this.grid[this.player_pos[0]+1][this.player_pos[1]].is_accessible) {
+                this.make_player_move(this.player_pos, [this.player_pos[0]+1, this.player_pos[1]])
+                return true
+            }
+        }
+        else if (direction == "left") {
+            if (this.player_pos[1]-1 >= 0 && this.grid[this.player_pos[0]][this.player_pos[1]-1].is_accessible) {
+                this.make_player_move(this.player_pos, [this.player_pos[0], this.player_pos[1]-1])
+                return true
+            }
+        }
+        else if (direction == "right") {
+            if (this.player_pos[1]+1 < this.grid_size && this.grid[this.player_pos[0]][this.player_pos[1]+1].is_accessible) {
+                this.make_player_move(this.player_pos, [this.player_pos[0], this.player_pos[1]+1])
+                return true
+            }
+        }
+
+        return false
+    }
+
     // Make random move
     make_player_move(starting_pos: number[], target_pos: number[]) {
         let player: Player = this.grid[starting_pos[0]][starting_pos[1]].occupant as Player;
@@ -480,6 +527,9 @@ class Dungeon {
         this.grid[starting_pos[0]][starting_pos[1]].occupant = null
         this.grid[target_pos[0]][target_pos[1]].occupant = player
         this.player_pos = target_pos
+
+        const { incrementTick } = useStore.getState()
+        incrementTick()
 
     }
 

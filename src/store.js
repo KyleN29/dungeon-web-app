@@ -44,6 +44,27 @@ const useStore = create(function (set) {
                 }
             }
         }),
+        equippedArmor: {
+            "Helmet": null,
+            "Chestplate": null,
+            "Leggings": null,
+            "Boots": null,
+        },
+        equipArmor: (itemID) => set((state) => {
+            let item = null
+            for (let i = 0; i < state.inventory.length; i++) {
+                if (itemID == state.inventory[i].id) {
+                    item = state.inventory[i]
+                }
+            }
+            if (!item) return
+            return {
+                equippedArmor: {
+                    ...state.equippedArmor,
+                    [item.type]: item
+                }
+            }
+    }),
         addItem: (item) => set((state) => ({inventory: [...state.inventory, item]})),
         increaseItemQuantity: (itemName, quantity) => set((state) => {
             return {inventory: state.inventory.map(item =>

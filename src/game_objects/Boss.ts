@@ -6,4 +6,11 @@ class Boss extends Enemy {
     }
 }
 
+export const dungeon_bosses: Record<string, Record<string, Boss>> = {
+    'Goblin Dungeon': {
+        // 'Goblin Lord': new Boss('Goblin Lord', 60, 12, 100),
+        'Goblin Lord': new Boss('Goblin Lord', 600, 120, 100),
+    }
+}
+
 export default Boss

@@ -1,15 +1,25 @@
 import {useState} from 'react'
 import useStore from '../store';
-function equipSelectedWeapon(itemName) {
-    const { equipWeapon } = useStore.getState()
-
-    equipWeapon(itemName)
+function equipItem(item) {
+    const { equipWeapon, equipArmor } = useStore.getState()
+    if (item.type == "Weapon") {
+        equipWeapon(item.id)
+    }
+    else {
+        equipArmor(item.id)
+    }
 }
 
-function InventorySlot({ item, equippedWeapon}) {
-    let equippedWeaponId = null
-    if (equippedWeapon) equippedWeaponId = equippedWeapon.id;
-    const isEquipped = item.id == equippedWeaponId
+function isItemEquipped(item, equippedWeapon, equippedArmor) {
+    if ((equippedWeapon && item.id == equippedWeapon.id) || (equippedArmor["Helmet"] && equippedArmor["Helmet"].id == item.id) || (equippedArmor["Chestplate"] && equippedArmor["Chestplate"].id == item.id)
+         || (equippedArmor["Leggings"] && equippedArmor["Leggings"].id == item.id) || (equippedArmor["Boots"] && equippedArmor["Boots"].id == item.id)) {
+        return true
+    }
+    return false
+}
+
+function InventorySlot({ item, equippedWeapon, equippedArmor}) {
+    const isEquipped = isItemEquipped(item, equippedWeapon, equippedArmor)
 
     const [isHovered, SetIsHovered] = useState(false);
   return (
@@ -27,8 +37,8 @@ function InventorySlot({ item, equippedWeapon}) {
                 )
             }
             {
-                item.type == 'Weapon' && (!isEquipped) && (
-                    <button onClick={() => {equipSelectedWeapon(item.id);}} className='bg-green-400 transition duration-300 cursor-pointer hover:bg-green-600 w-[60%] mb-[5px] rounded'>Equip</button>
+                (item.type != 'Material') && (!isEquipped) && (
+                    <button onClick={() => {equipItem(item);}} className='bg-green-400 transition duration-300 cursor-pointer hover:bg-green-600 w-[60%] mb-[5px] rounded'>Equip</button>
                 )
             }
             

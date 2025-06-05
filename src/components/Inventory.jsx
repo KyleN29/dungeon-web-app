@@ -6,8 +6,9 @@ function Inventory() {
     const [visible, setVisible] = useState(false);
     const inventory = useStore((s) => s.inventory)
     // Important in order for the component to update at correct times
-    const tick = useStore((s) => s.tick);
+    // const tick = useStore((s) => s.tick);
     const equippedWeapon = useStore((s) => s.equippedWeapon);
+    const equippedArmor = useStore((s) => s.equippedArmor)
     
   return (
     <>
@@ -22,7 +23,7 @@ function Inventory() {
     />
                 <div className='p-8 flex flex-wrap items-start justify-start gap-8 content-start bg-neutral-500 p4 rounded shadow w-[80%] h-[80%] pointer-events-auto z-20'>
                     {inventory.map((item, index) => (
-                        <div key={index}><InventorySlot item={item} equippedWeapon={equippedWeapon}></InventorySlot></div>
+                        <div key={index}><InventorySlot item={item} equippedWeapon={equippedWeapon} equippedArmor={equippedArmor}></InventorySlot></div>
                     ))}
                 </div>
             </div>
