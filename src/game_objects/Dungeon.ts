@@ -32,21 +32,21 @@ class Dungeon {
     current_level: number
     max_levels: { [key: number]: number } // Mastery: max_level for that mastery
     auto_change_level: boolean
-    constructor() {
+    dungeon_name: string
+    constructor(dungeon_name: string, grid_size: number) {
         this.dungeon_id = 0;
         this.grid = []
         this.accessible_cells = []
         // Track cells that have been visited so the pathfinding doesnt move to same cells repeatedly
         this.player_move_sequence = []
-        this.grid_size = 6
+        this.grid_size = grid_size
         this.moves = 30;
         this.following_path = false
         
         this.dungeon_active = false
         
         this.output_text = []
-        this.dungeons = ['Goblin Dungeon', 'Catacombs']
-        this.current_dungeon = 'Goblin Dungeon'
+        this.dungeon_name = dungeon_name
 
         this.current_mastery = 1
         this.max_mastery = 1
@@ -64,7 +64,9 @@ class Dungeon {
 
     start_dungeon() {
         if (this.dungeon_active) return
-        
+        let x = useStore.getState().dungeonStats
+        this.max_mastery = useStore.getState().dungeonStats[this.dungeon_name]["max_mastery"]
+        this.max_levels = useStore.getState().dungeonStats[this.dungeon_name]["max_levels"]
         this.grid_size = 6 + Math.floor(this.current_mastery-1)
         this.dungeon_id++;
         this.dungeon_active = true
@@ -102,8 +104,8 @@ class Dungeon {
     // }
 
     get_dungeon_enemy_info(includeBosses: boolean = false) {
-        let enemies = dungeon_enemies[this.current_dungeon]
-        let bosses = dungeon_bosses[this.current_dungeon]
+        let enemies = dungeon_enemies[this.dungeon_name]
+        let bosses = dungeon_bosses[this.dungeon_name]
         let enemy_info = {}
         for (const name of Object.keys(enemies)) {
             enemy_info[name] = {drops: enemy_drops[name], health: enemies[name].compute_health(this.current_mastery, this.current_level), attack: enemies[name].compute_attack(this.current_mastery, this.current_level),  isBoss: false}
@@ -210,7 +212,7 @@ class Dungeon {
             let enemy_names = Object.keys(enemies)
             random_index = Math.floor(Math.random() * enemy_names.length)
 
-            let random_enemy = dungeon_enemies[this.current_dungeon][enemy_names[random_index]]
+            let random_enemy = dungeon_enemies[this.dungeon_name][enemy_names[random_index]]
             let enemy = new Enemy(random_enemy.name, Math.floor(random_enemy.health*this.current_mastery*(1+this.current_level/100)), Math.floor(random_enemy.attack*this.current_mastery*(1+this.current_level/100)), random_enemy.coin_value)
             enemy.attack = enemy.compute_attack(this.current_mastery, this.current_level)
             enemy.health = enemy.compute_health(this.current_mastery, this.current_level)
@@ -247,7 +249,9 @@ class Dungeon {
         
         if (!longest_path.length) return
         let furthest_cell = longest_path[longest_path.length - 1]
-        let boss = dungeon_bosses[this.current_dungeon]["Goblin Lord"]
+        let dungeon_boss_names = Object.keys(dungeon_bosses[this.dungeon_name])
+        let random_index = Math.floor(Math.random() * dungeon_boss_names.length)
+        let boss = dungeon_bosses[this.dungeon_name][dungeon_boss_names[random_index]]
         this.grid[furthest_cell[0]][furthest_cell[1]] = new Cell({occupant: new Boss(boss.name, boss.health, boss.attack, boss.coin_value), is_accessible: true})
     }
 
@@ -352,7 +356,7 @@ class Dungeon {
                 await new Promise(resolve => setTimeout(resolve, 1000 - upgradeManager.faster_moves.level * 100))
             }
             
-            if (dungeon_id !== this.dungeon_id) {
+            if (dungeon_id !== this.dungeon_id || this.dungeon_name != useStore.getState().currentDungeonKey) {
                 return; // abort this path, its for an old dungeon
             }
             if (this.moves > 0) {
@@ -368,7 +372,7 @@ class Dungeon {
         }
         if (this.moves > 0) {
             this.following_path = false
-            if (dungeon_id !== this.dungeon_id) {
+            if (dungeon_id !== this.dungeon_id || this.dungeon_name != useStore.getState().currentDungeonKey) {
                 return; // abort this path, its for an old dungeon
             }
             let nearest_entity_path = this.get_nearest_entity_path()
@@ -380,6 +384,11 @@ class Dungeon {
             this.start_dungeon()
             
         }
+    }
+
+    stop_dungeon() {
+        this.following_path = false
+        this.dungeon_active = false
     }
 
     move_player_randomly() {
@@ -496,14 +505,15 @@ class Dungeon {
             if (result && new_occupant instanceof Boss) {
                 if (this.current_level < 20 && this.current_level == this.max_levels[this.current_mastery]) {
                     this.max_levels[this.current_mastery] = this.current_level + 1
+                    useStore.getState().setMaxLevels(this.current_mastery, this.max_levels)
                     if (this.auto_change_level) this.current_level += 1;
-                    
                 }
                 else if (this.current_level < 20) {
                     if (this.auto_change_level) this.current_level += 1;
                 }
                 else if (this.current_mastery == this.max_mastery && this.max_mastery < 5) {
                     this.max_mastery = this.current_mastery + 1
+                    useStore.getState().setMaxMastery(this.dungeon_name, this.max_mastery)
                 }
                 this.following_path = false
                 this.dungeon_active = false
@@ -520,7 +530,8 @@ class Dungeon {
             
         }
         else if (new_occupant instanceof Chest) {
-            player.coins += new_occupant.value
+            let { addCoins } = useStore.getState()
+            addCoins(new_occupant.value)
         }
         
 

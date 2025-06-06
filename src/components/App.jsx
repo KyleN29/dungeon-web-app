@@ -10,6 +10,8 @@ import Upgrades from './Upgrades';
 import EquipmentButton from './EquipmentButton';
 import AlertContainer from './AlertContainer';
 import MoveButtons from './MoveButtons';
+import ChangeDungeon from './ChangeDungeon';
+
 function App() {
     /* 
     TODO:
@@ -29,6 +31,7 @@ function App() {
     </div>
     
     <Upgrades></Upgrades>
+    <ChangeDungeon></ChangeDungeon>
     <MoveButtons></MoveButtons>
       <Score></Score>
         <Inventory></Inventory>

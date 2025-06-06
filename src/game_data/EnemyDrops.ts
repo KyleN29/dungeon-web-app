@@ -1,12 +1,7 @@
 import Item from "../game_objects/Item"
 import Weapon from "../game_objects/Weapon"
 import Armor from "../game_objects/Armor"
-export type Drop = {
-    item: Item
-    rate: number
-}
 
-type DropTable = Drop[]
 
 export const enemy_drops: Record<string, Item[]> = {
     "goblin": [
@@ -19,7 +14,9 @@ export const enemy_drops: Record<string, Item[]> = {
     ],
     "Goblin Lord": [
         new Item('Lord Coin', 'Material', 1, 'A rare goblin coin', [.5, .6, .75, .8, .9])
-    ]
+    ],
+    "slime": [],
+    "Slime Lord": []
 }
 
 

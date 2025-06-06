@@ -50,7 +50,7 @@ function getCellClass(cell) {
     return `${base} ${occupantClass}`;
   }
 function Score() {
-    const dungeon = useStore((state) => state.dungeon);
+    const dungeon = useStore.getState().getCurrentDungeon()
     const coins = useStore((state) => state.coins);
     
   const player = dungeon.get_player()

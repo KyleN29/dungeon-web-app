@@ -41,11 +41,24 @@ function renderDungeon(dungeon) {
     return rendered_dungeon
 
 }
-function getCellClass(cell, isFlash) {
+function getCellClass(cell, isFlash, dungeonName) {
     if (isFlash) return 'bg-red-500 bg-opacity-50'
-    if (!cell) return 'bg-[rgb(43,43,43)] aspect-square';
-  
-    const base = 'border-2 border-[rgb(43,43,43)] bg-[rgb(20,20,20)] aspect-square flex items-center justify-center text-sm sm:text-base md:text-lg';
+    let backgroundColor = "bg-[rgb(43,43,43)]"
+    let cellColor = "bg-[rgb(20,20,20)]"
+    let border = "border-[rgb(43,43,43)]"
+    if (dungeonName == "Slime Dungeon") {
+        backgroundColor = "bg-green-600"
+        cellColor = "bg-green-800"
+        border = "border-green-600"
+        console.log("Green1!")
+    }
+    
+    if (!cell) return `${backgroundColor} aspect-square`;
+    
+    
+    
+
+    const base = `border-2 ${border} ${cellColor} aspect-square flex items-center justify-center text-sm sm:text-base md:text-lg`;
     const colorMap = {
       P: 'text-green-400',
       E: 'text-red-500',
@@ -59,10 +72,11 @@ function getCellClass(cell, isFlash) {
   }
 function DungeonLayout() {
     const flash = useFlashTrigger(registerFlashTrigger);
-  const dungeon = useStore((s) => s.dungeon)
+  const dungeon = useStore((s) => s.dungeons[s.currentDungeonKey])
+  const dungeonKey = useStore((s) => (s.currentDungeonKey))
   useEffect(() => {
     dungeon.start_dungeon()
-  }, [])
+  }, [dungeonKey])
   // Important in order for the component to update at correct times
   const tick = useStore((s) => s.tick);
 
@@ -70,9 +84,9 @@ function DungeonLayout() {
     <>
     <div id="flashTarget" style={{
     gridTemplateColumns: `repeat(${dungeon.grid_size}, minmax(0, 1fr))`,
-  }} className={`grid w-full h-full gap-[0px]`}>
+  }} className={`grid w-full h-full gap-[0px] border-collapse`}>
         {renderDungeon(dungeon.grid).flat().map((cell, index) => (
-            <div key={index} className={getCellClass(cell, flash)}>{cell}</div>
+            <div key={index} className={getCellClass(cell, flash, dungeonKey)}>{cell}</div>
         ))}
       
     </div>

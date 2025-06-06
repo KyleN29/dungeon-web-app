@@ -64,6 +64,9 @@ export const dungeon_enemies: Record<string, Record<string, Enemy>> = {
         // 'skeleton': new Enemy('skeleton', 30, 6, 100)
         'goblin': new Enemy('goblin', 250, 25, 100),
         'skeleton': new Enemy('skeleton', 300, 60, 100)
+    },
+    'Slime Dungeon': {
+        'slime': new Enemy('slime', 1000, 50, 1000),
     }
 }
 

@@ -10,7 +10,7 @@ import './App.css'
 import useStore from '~/store';
 
 function DungeonOutput() {
-  const dungeon = useStore(function(s) {return s.dungeon;})
+    const dungeon = useStore.getState().getCurrentDungeon()
   
   // Important in order for the component to update at correct times
   const tick = useStore((s) => s.tick);

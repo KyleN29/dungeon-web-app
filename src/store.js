@@ -8,6 +8,15 @@ import AlertManager from "./game_objects/AlertManager"
 const useStore = create(function (set) {
     return {
         dungeon: new Dungeon(),
+        dungeons: {
+            "Goblin Dungeon": new Dungeon("Goblin Dungeon", 6),
+            "Slime Dungeon": new Dungeon("Slime Dungeon", 7),
+        },
+        currentDungeonKey: "Goblin Dungeon",
+        setCurrentDungeonKey: (name) => set((state) => ({currentDungeonKey: name})),
+        getCurrentDungeon: function () {
+            return this.dungeons[this.currentDungeonKey];
+        },
         upgradeManager: new UpgradeManager(),
         alertManager: new AlertManager(),
         tick: 0,
@@ -17,9 +26,48 @@ const useStore = create(function (set) {
         incrementTick: () => set((state) => ({ tick: state.tick + 1 })), // dummy update to trigger re-render
         dungeonStats: {
             "Goblin Dungeon": {
-                max_mastery: 0
-            }
+                max_mastery: 1,
+                max_levels: { // mastery / max_level
+                    1: 1,
+                    2: 1,
+                    3: 1,
+                    4: 1,
+                    5: 1,
+                }
+            },
+            "Slime Dungeon": {
+                max_mastery: 1,
+                max_levels: {
+                    1: 1,
+                    2: 1,
+                    3: 1,
+                    4: 1,
+                    5: 1,
+                }
+            },
         },
+        setMaxMastery: (dungeon, mastery) => set((state) => (
+            {
+                dungeonStats: {
+                    ...state.dungeonStats,
+                    [dungeon]: {
+                        ...state.dungeonStats[dungeon],
+                        max_mastery: mastery
+                    }
+                }
+            }
+        )),
+        setMaxLevels: (dungeon, maxLevels) => set((state) => (
+            {
+                dungeonStats: {
+                    ...state.dungeonStats,
+                    [dungeon]: {
+                        ...state.dungeonStats[dungeon],
+                        max_levels: maxLevels
+                    }
+                }
+            }
+        )),
         incrementTimesCompleted: (dungeon) => set((state) => (
             {
                 dungeonStats: {

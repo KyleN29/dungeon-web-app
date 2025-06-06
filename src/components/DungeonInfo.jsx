@@ -12,14 +12,14 @@ import useStore from '~/store';
 
 
 function DungeonInfo() {
-  const dungeon = useStore((s) => s.dungeon)
+  const dungeon = useStore.getState().getCurrentDungeon()
     const enemy_info = dungeon.get_dungeon_enemy_info(true)
     const { dungeonStats } = useStore.getState()
   const tick = useStore((s) => s.tick); 
 
   return (
     <>
-    <div>{dungeon.current_dungeon}, 
+    <div>{dungeon.dungeon_name}, 
         <br />Mastery: {dungeon.current_mastery} (Max: {dungeon.max_mastery})<button className="bg-neutral-500 cursor-pointer hover:bg-neutral-600 rounded w-[60px]" onClick={() => dungeon.try_decrease_mastery()}>Down</button> <button className="bg-neutral-500 cursor-pointer hover:bg-neutral-600 rounded w-[60px]" onClick={() => dungeon.try_increase_mastery()}>Up</button>
         <input defaultChecked onChange={(e) => dungeon.set_auto_change_level(e.target.checked)} type="checkbox" id="vehicle1" name="vehicle1" value="Bike"></input><br></br>Level: {dungeon.current_level} (Max: {dungeon.max_levels[dungeon.current_mastery]})<button className="bg-neutral-500 cursor-pointer hover:bg-neutral-600 rounded w-[60px]" onClick={() => dungeon.try_decrease_level()}>Down</button> <button className="bg-neutral-500 cursor-pointer hover:bg-neutral-600 rounded w-[60px]" onClick={() => dungeon.try_increase_level()}>Up</button>
         {Object.keys(enemy_info).map((enemy, index) =>
