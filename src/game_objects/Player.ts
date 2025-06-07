@@ -24,6 +24,7 @@ class Player {
             }
             
         }
+        if (inventory.length > 80) return;
         addItem(item)
 
     }

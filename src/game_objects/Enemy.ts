@@ -1,7 +1,7 @@
 import {enemy_drops, Drop} from '~/game_data/EnemyDrops'
 import Item from './Item'
 import Weapon from './Weapon'
-
+import Armor from './Armor'
 
 
 class Enemy {
@@ -30,6 +30,10 @@ class Enemy {
                 if (drops[i] instanceof Weapon) {
                     let weapon = drops[i]
                     dropped_items.push(new Weapon(weapon.name, weapon.description, weapon.attack, weapon.rates))
+                }
+                else if (drops[i] instanceof Armor) {
+                    let armor = drops[i]
+                    dropped_items.push(new Armor(armor.name, armor.type, armor.description, armor.health, armor.defense, armor.rates))
                 }
                 else {
                     let item = drops[i]

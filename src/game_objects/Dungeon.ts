@@ -7,6 +7,8 @@ import useStore from '~/store';
 import { enemy_drops} from '../game_data/EnemyDrops'
 import alertManagerInstance from './AlertManagerInstance'
 import { triggerFlash } from './flashController';
+import { saveDungeonStats, saveInventory } from '../storageHelpers'
+
 type OutputType = 'kill' | 'drop' | 'start';
 
 interface OutputEntry {
@@ -440,6 +442,7 @@ class Dungeon {
         if (this.current_mastery + 1 <= this.max_mastery) {
             this.current_mastery += 1
             this.current_level = 1
+            saveDungeonStats()
             this.reset_dungeon()
         }
     }
@@ -506,6 +509,7 @@ class Dungeon {
                 if (this.current_level < 20 && this.current_level == this.max_levels[this.current_mastery]) {
                     this.max_levels[this.current_mastery] = this.current_level + 1
                     useStore.getState().setMaxLevels(this.current_mastery, this.max_levels)
+                    saveDungeonStats()
                     if (this.auto_change_level) this.current_level += 1;
                 }
                 else if (this.current_level < 20) {
@@ -571,6 +575,7 @@ class Dungeon {
                     }
                         
                 }
+                saveInventory()
 
                 return true
             }

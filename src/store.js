@@ -5,6 +5,8 @@ import Item from "./game_objects/Item"
 import Weapon from "./game_objects/Weapon";
 import UpgradeManager from "./game_objects/UpgradeManager"
 import AlertManager from "./game_objects/AlertManager"
+import { loadUpgradeData, loadDungeonStats, loadInventory } from './storageHelpers'
+
 const useStore = create(function (set) {
     return {
         dungeon: new Dungeon(),
@@ -17,7 +19,7 @@ const useStore = create(function (set) {
         getCurrentDungeon: function () {
             return this.dungeons[this.currentDungeonKey];
         },
-        upgradeManager: new UpgradeManager(),
+        upgradeManager: new UpgradeManager(loadUpgradeData()),
         alertManager: new AlertManager(),
         tick: 0,
         coins: 0,
@@ -83,6 +85,7 @@ const useStore = create(function (set) {
         playerHP: 3,
         score: 0,
         gameOver: false,
+        // inventory: loadInventory(),
         inventory: [],
         equippedWeapon: null,
         equipWeapon: (itemID) => set((state) => {
@@ -115,11 +118,12 @@ const useStore = create(function (set) {
     }),
         addItem: (item) => set((state) => ({inventory: [...state.inventory, item]})),
         increaseItemQuantity: (itemName, quantity) => set((state) => {
-            return {inventory: state.inventory.map(item =>
-                item.name === itemName
-                ? {...item, quantity: item.quantity + quantity}
-                : item
-            )}
+            for (const item of state.inventory) {
+                if (item.name === itemName) {
+                    item.quantity += quantity
+                }
+            }
+            return { inventory: [...state.inventory] } // triggers reactivity
         }),
         setDungeon: function (d) {
             set({ dungeon: d });
