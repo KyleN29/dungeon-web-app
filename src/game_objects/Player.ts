@@ -9,7 +9,7 @@ class Player {
     constructor() {
         this.health = 100
         this.max_health = 100
-        this.attack = 1000000000
+        this.attack = 10
         this.defense = 0
         this.coins = 0
 

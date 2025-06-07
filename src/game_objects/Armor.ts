@@ -3,8 +3,8 @@ import Item from "./Item";
 class Armor extends Item {
     health: number
     defense: number
-    constructor(name, type, description, health, defense, rates, id=crypto.randomUUID()) {
-        super(name, type, 1, description, rates, id)
+    constructor(name, type, description, health, defense, rarity, rates, id=crypto.randomUUID()) {
+        super(name, type, 1, description, rarity, rates, id)
         this.health = health
         this.defense = defense
     }

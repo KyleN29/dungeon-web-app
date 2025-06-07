@@ -10,6 +10,7 @@ function Upgrades() {
   return (
     <>
         <button className="w-[40px] bg-neutral-600 hover:bg-neutral-700 cursor-pointer" onClick={() => (saveUpgradeData())}>Save :P</button>
+        <button className="w-[40px] bg-neutral-600 hover:bg-neutral-700 cursor-pointer" onClick={() => (localStorage.clear())}>Wipe :(</button>
         <div className='flex flex-col'>
            { upgrades.map((upgrade, index) => (
             <button onClick={() => {upgradeManager.buy_upgrade(upgrade)}} key={index} className='w-[50%] bg-neutral-400 hover:bg-neutral-500'>{upgrade.name}-{upgrade.level}</button>

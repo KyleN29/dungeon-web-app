@@ -29,15 +29,15 @@ class Enemy {
             if (Math.random() < drops[i].rates[current_mastery-1]) {
                 if (drops[i] instanceof Weapon) {
                     let weapon = drops[i]
-                    dropped_items.push(new Weapon(weapon.name, weapon.description, weapon.attack, weapon.rates))
+                    dropped_items.push(new Weapon(weapon.name, weapon.description, weapon.attack, weapon.rarity, weapon.rates))
                 }
                 else if (drops[i] instanceof Armor) {
                     let armor = drops[i]
-                    dropped_items.push(new Armor(armor.name, armor.type, armor.description, armor.health, armor.defense, armor.rates))
+                    dropped_items.push(new Armor(armor.name, armor.type, armor.description, armor.health, armor.defense, armor.rarity, armor.rates))
                 }
                 else {
                     let item = drops[i]
-                    dropped_items.push(new Item(item.name, item.type, item.quantity, item.description, item.rates))
+                    dropped_items.push(new Item(item.name, item.type, item.quantity, item.description, item.rarity, item.rates))
                 }
                 
             }
@@ -64,10 +64,10 @@ class Enemy {
 
 export const dungeon_enemies: Record<string, Record<string, Enemy>> = {
     'Goblin Dungeon': {
-        // 'goblin': new Enemy('goblin', 25, 5, 100),
-        // 'skeleton': new Enemy('skeleton', 30, 6, 100)
-        'goblin': new Enemy('goblin', 250, 25, 100),
-        'skeleton': new Enemy('skeleton', 300, 60, 100)
+        'goblin': new Enemy('goblin', 25, 5, 60),
+        'skeleton': new Enemy('skeleton', 30, 6, 100)
+        // 'goblin': new Enemy('goblin', 250, 25, 100),
+        // 'skeleton': new Enemy('skeleton', 300, 60, 100)
     },
     'Slime Dungeon': {
         'slime': new Enemy('slime', 1000, 50, 1000),

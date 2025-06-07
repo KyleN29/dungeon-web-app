@@ -18,10 +18,24 @@ function isItemEquipped(item, equippedWeapon, equippedArmor) {
     return false
 }
 
+function getRarityColor(rarity) {
+    switch (rarity) {
+        case "Common":
+            return "white"
+        case "Uncommon":
+            return "rgb(142, 185, 214)"
+        case "Rare":
+            return "rgb(47, 86, 218)"
+        case "Epic":
+            return "rgb(157, 35, 161)"
+    }
+}
+
 function InventorySlot({ item, equippedWeapon, equippedArmor}) {
     const isEquipped = isItemEquipped(item, equippedWeapon, equippedArmor)
 
     const [isHovered, SetIsHovered] = useState(false);
+    const color = getRarityColor(item.rarity)
   return (
     <>
         <div onMouseEnter={() => SetIsHovered(true)} onMouseLeave={() => SetIsHovered(false)} className='flex flex-col items-center content-between relative w-36 h-36 bg-neutral-800 rounded-xl'>
@@ -35,19 +49,19 @@ function InventorySlot({ item, equippedWeapon, equippedArmor}) {
             }
             
             </div>            
-            <div className="flex flex-col w-full">
+            <div className="flex flex-col w-full mt-2">
                 {
                     item.type == "Weapon" &&
                     (
-                        <div className="text-left w-full ml-4">-Attack: {item.attack}</div>
+                        <div className="text-[rgb(214,67,67)] text-left w-full ml-4">-Attack: {item.attack}</div>
                     )
                 }
                 {
                     ["Helmet", "Chestplate", "Leggings", "Boots"].includes(item.type) &&
                     (
                         <>
-                        <div className="text-left w-full ml-4">-Health: {item.health}</div>
-                        <div className="text-left w-full ml-4">-Defense: {item.defense}</div>
+                        <div className="text-green-400 text-left w-full ml-4">-Health: {item.health}</div>
+                        <div className="text-gray-200 text-left w-full ml-4">-Defense: {item.defense}</div>
                         </>
                         
                     )
@@ -56,7 +70,7 @@ function InventorySlot({ item, equippedWeapon, equippedArmor}) {
             <div className="flex flex-row items-end h-full w-full">
                 <div className="relative w-full mb-1">
                     <div className="absolute left-2" >{item.quantity}x</div>
-                    <div className="text-purple-600 italic text-center w-full">Epic</div>
+                    <div style={{color}}className="italic text-center w-full">{item.rarity}</div>
                     {
                     item.type !== 'Material' && !isEquipped && (
                         <input

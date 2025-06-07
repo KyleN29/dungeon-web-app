@@ -6,6 +6,7 @@ const UPGRADE_KEY = 'upgrade_levels'
 const DUNGEON_STATS_KEY = 'dungeon_stats'
 const INVENTORY_KEY = 'inventory'
 
+
 export function saveUpgradeData() {
     const upgradeManager = useStore.getState().upgradeManager
     const data = upgradeManager.toJSON()

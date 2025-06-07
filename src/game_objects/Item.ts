@@ -4,13 +4,15 @@ class Item {
     type: string
     quantity: number
     description: string
+    rarity: string
     rates: number[]
-    constructor(name, type, quantity, description, rates, id=crypto.randomUUID()) {
+    constructor(name, type, quantity, description, rarity, rates, id=crypto.randomUUID()) {
         this.id = id
         this.name = name
         this.type = type
         this.quantity = quantity
         this.description = description
+        this.rarity = rarity
         this.rates = rates
     }
 

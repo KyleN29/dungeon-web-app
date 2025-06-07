@@ -28,7 +28,6 @@ class Dungeon {
     dungeon_active: boolean
     dungeon_id: number
     dungeons: string[]
-    current_dungeon: string
     current_mastery: number
     max_mastery: number
     current_level: number
@@ -227,10 +226,16 @@ class Dungeon {
 
     populate_chests() {
         const {upgradeManager} = useStore.getState()
+        const dungeonBaseChestValues = {
+            "Goblin Dungeon": 100,
+            "Slime Dungeon": 2000,
+        }
+        const baseValue = dungeonBaseChestValues[this.dungeon_name]
+        const finalValue = Math.floor(baseValue*((this.current_level-1)/20 + 1)*((this.current_mastery-1)/2+1))
         for (let i = 0; i < this.accessible_cells.length; i++) {
             let cell = this.accessible_cells[i]
             if (this.grid[cell[0]][cell[1]].occupant == null && Math.random() < (.1 + upgradeManager.spawn_chests.level * .05)) {
-                this.grid[cell[0]][cell[1]] = new Cell({occupant: new Chest(), is_accessible: true})
+                this.grid[cell[0]][cell[1]] = new Cell({occupant: new Chest(finalValue), is_accessible: true})
             }
         }
     }
@@ -564,7 +569,7 @@ class Dungeon {
             if (enemy.health <= 0) {
                 this.output_text.push({text: 'Killed '+enemy.name+'. '+player.health+' health remaining.', type: 'kill'})
                 let { addCoins } = useStore.getState()
-                addCoins(enemy.coin_value)
+                addCoins(Math.floor(enemy.coin_value*this.current_mastery + enemy.coin_value*((this.current_level-1)/20)))
                 let items = enemy.drop_items(this.current_mastery)
                 for (let i = 0; i < items.length; i++) {
                     player.add_item_to_inventory(items[i])

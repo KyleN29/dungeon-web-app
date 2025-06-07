@@ -2,8 +2,8 @@ import Item from "./Item";
 
 class Weapon extends Item {
     attack: number
-    constructor(name, description, attack, rates, id=crypto.randomUUID()) {
-        super(name, 'Weapon', 1, description, rates, id)
+    constructor(name, description, attack, rates, rarity, id=crypto.randomUUID()) {
+        super(name, 'Weapon', 1, description, rates, rarity, id)
         this.attack = attack
     }
 
